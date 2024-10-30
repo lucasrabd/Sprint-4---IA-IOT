@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chatbot FAQ</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div id="chatbot-container">
+    <h2>Chatbot FAQ</h2>
+    <label for="question-select">Selecione uma pergunta:</label>
+    <select id="question-select">
+      <option value="">Escolha uma pergunta...</option>
+      {% for item in faq %}
+        <option value="{{ loop.index0 }}">{{ item.question }}</option>
+      {% endfor %}
+    </select>
+    <button onclick="getAnswer()">Ver Resposta</button>
+    <div id="answer"></div>
+  </div>
+
+  <script>
+    async function getAnswer() {
+      const select = document.getElementById("question-select");
+      const answerDiv = document.getElementById("answer");
+      const questionId = select.value;
+
+      if (questionId) {
+        const response = await fetch(`/get_answer/${questionId}`);
+        const data = await response.json();
+
+        answerDiv.textContent = data.answer || "Erro ao obter resposta.";
+        answerDiv.classList.add("show"); // Adiciona a classe para exibir a resposta
+      } else {
+        answerDiv.textContent = "Por favor, selecione uma pergunta.";
+        answerDiv.classList.add("show"); // Exibe a mensagem de aviso
+      }
+    }
+  </script>
+</body>
+</html>
